@@ -1,4 +1,3 @@
-import os
 import base64
 import datetime
 import hashlib
@@ -29,7 +28,7 @@ class HuobiSVC:
                   'size': size}
 
         url = MARKET_URL + '/market/history/kline'
-        return http_get_request(url, params)
+        return self.http_get_request(url, params)
 
     # 获取marketdepth
     def get_depth(self, symbol, type):
@@ -42,7 +41,7 @@ class HuobiSVC:
                   'type': type}
 
         url = MARKET_URL + '/market/depth'
-        return http_get_request(url, params)
+        return self.http_get_request(url, params)
 
     # 获取tradedetail
     def get_trade(self, symbol):
@@ -67,7 +66,7 @@ class HuobiSVC:
     # 获取merge ticker
     def get_ticker(self, symbol):
         """
-        :param symbol: 
+        :param symbol:
         :return:
         """
         params = {'symbol': symbol}
@@ -123,7 +122,7 @@ class HuobiSVC:
 
     def get_accounts(self):
         """
-        :return: 
+        :return:
         """
         path = "/v1/account/accounts"
         params = {}
@@ -149,19 +148,21 @@ class HuobiSVC:
     # 创建并执行订单
     def send_order(self, acct_id, amount, source, symbol, _type, price=0):
         """
-        :param amount: 
+        :param acct_id: account id
+        :param amount:
         :param source: 如果使用借贷资产交易，请在下单接口,请求参数source中填写'margin-api'
-        :param symbol: 
+        :param symbol:
         :param _type: 可选值 {buy-market：市价买, sell-market：市价卖, buy-limit：限价买, sell-limit：限价卖}
-        :param price: 
-        :return: 
+        :param price:
+        :return:
         """
+
         try:
             accounts = self.get_accounts()
             acct_id = accounts['data'][0]['id']
         except BaseException as e:
             print('get acct_id error.%s' % e)
-            acct_id = ACCOUNT_ID
+            acct_id = acct_id
 
         params = {"account-id": acct_id,
                   "amount": amount,
@@ -172,54 +173,54 @@ class HuobiSVC:
             params["price"] = price
 
         url = '/v1/order/orders/place'
-        return api_key_post(params, url)
+        return self.api_key_post(params, url)
 
     # 撤销订单
-    def cancel_order(order_id):
+    def cancel_order(self, order_id):
         """
 
-        :param order_id: 
-        :return: 
+        :param order_id:
+        :return:
         """
         params = {}
         url = "/v1/order/orders/{0}/submitcancel".format(order_id)
-        return api_key_post(params, url)
+        return self.api_key_post(params, url)
 
     # 查询某个订单
-    def order_info(order_id):
+    def order_info(self, order_id):
         """
 
-        :param order_id: 
-        :return: 
+        :param order_id:
+        :return:
         """
         params = {}
         url = "/v1/order/orders/{0}".format(order_id)
-        return api_key_get(params, url)
+        return self.api_key_get(params, url)
 
     # 查询某个订单的成交明细
-    def order_matchresults(order_id):
+    def order_matchresults(self, order_id):
         """
 
-        :param order_id: 
-        :return: 
+        :param order_id:
+        :return:
         """
         params = {}
         url = "/v1/order/orders/{0}/matchresults".format(order_id)
-        return api_key_get(params, url)
+        return self.api_key_get(params, url)
 
     # 查询当前委托、历史委托
-    def orders_list(symbol, states, types=None, start_date=None, end_date=None, _from=None, direct=None, size=None):
+    def orders_list(self, symbol, states, types=None, start_date=None, end_date=None, _from=None, direct=None, size=None):
         """
 
-        :param symbol: 
+        :param symbol:
         :param states: 可选值 {pre-submitted 准备提交, submitted 已提交, partial-filled 部分成交, partial-canceled 部分成交撤销, filled 完全成交, canceled 已撤销}
         :param types: 可选值 {buy-market：市价买, sell-market：市价卖, buy-limit：限价买, sell-limit：限价卖}
-        :param start_date: 
-        :param end_date: 
-        :param _from: 
+        :param start_date:
+        :param end_date:
+        :param _from:
         :param direct: 可选值{prev 向前，next 向后}
-        :param size: 
-        :return: 
+        :param size:
+        :return:
         """
         params = {'symbol': symbol,
                   'states': states}
@@ -237,20 +238,20 @@ class HuobiSVC:
         if size:
             params['size'] = size
         url = '/v1/order/orders'
-        return api_key_get(params, url)
+        return self.api_key_get(params, url)
 
     # 查询当前成交、历史成交
-    def orders_matchresults(symbol, types=None, start_date=None, end_date=None, _from=None, direct=None, size=None):
+    def orders_matchresults(self, symbol, types=None, start_date=None, end_date=None, _from=None, direct=None, size=None):
         """
 
-        :param symbol: 
+        :param symbol:
         :param types: 可选值 {buy-market：市价买, sell-market：市价卖, buy-limit：限价买, sell-limit：限价卖}
-        :param start_date: 
-        :param end_date: 
-        :param _from: 
+        :param start_date:
+        :param end_date:
+        :param _from:
         :param direct: 可选值{prev 向前，next 向后}
-        :param size: 
-        :return: 
+        :param size:
+        :return:
         """
         params = {'symbol': symbol}
 
@@ -267,13 +268,13 @@ class HuobiSVC:
         if size:
             params['size'] = size
         url = '/v1/order/matchresults'
-        return api_key_get(params, url)
+        return self.api_key_get(params, url)
 
     # 查询所有当前帐号下未成交订单
-    def open_orders(account_id, symbol, side='', size=10):
+    def open_orders(self, account_id, symbol, side='', size=10):
         """
-        :param symbol: 
-        :return: 
+        :param symbol:
+        :return:
         """
         params = {}
         url = "/v1/order/openOrders"
@@ -286,13 +287,13 @@ class HuobiSVC:
         if size:
             params['size'] = size
 
-        return api_key_get(params, url)
+        return self.api_key_get(params, url)
 
     # 批量取消符合条件的订单
-    def cancel_open_orders(account_id, symbol, side='', size=10):
+    def cancel_open_orders(self, account_id, symbol, side='', size=10):
         """
-        :param symbol: 
-        :return: 
+        :param symbol:
+        :return:
         """
         params = {}
         url = "/v1/order/orders/batchCancelOpenOrders"
@@ -305,16 +306,16 @@ class HuobiSVC:
         if size:
             params['size'] = size
 
-        return api_key_post(params, url)
+        return self.api_key_post(params, url)
 
     # 申请提现虚拟币
-    def withdraw(address, amount, currency, fee=0, addr_tag=""):
+    def withdraw(self, address, amount, currency, fee=0, addr_tag=""):
         """
 
-        :param address_id: 
-        :param amount: 
+        :param address_id:
+        :param amount:
         :param currency:btc, ltc, bcc, eth, etc ...(火币Pro支持的币种)
-        :param fee: 
+        :param fee:
         :param addr-tag:
         :return: {
                   "status": "ok",
@@ -328,13 +329,13 @@ class HuobiSVC:
                   "addr-tag": addr_tag}
         url = '/v1/dw/withdraw/api/create'
 
-        return api_key_post(params, url)
+        return self.api_key_post(params, url)
 
     # 申请取消提现虚拟币
-    def cancel_withdraw(address_id):
+    def cancel_withdraw(self, address_id):
         """
 
-        :param address_id: 
+        :param address_id:
         :return: {
                   "status": "ok",
                   "data": 700
@@ -343,29 +344,30 @@ class HuobiSVC:
         params = {}
         url = '/v1/dw/withdraw-virtual/{0}/cancel'.format(address_id)
 
-        return api_key_post(params, url)
+        return self.api_key_post(params, url)
 
     '''
-    借贷API
+    MARGIN API
     '''
 
     # 创建并执行借贷订单
 
-    def send_margin_order(amount, source, symbol, _type, price=0):
+    def send_margin_order(self, account_id, amount, source, symbol, _type, price=0):
         """
-        :param amount: 
+        :param account_id:
+        :param amount:
         :param source: 'margin-api'
-        :param symbol: 
+        :param symbol:
         :param _type: 可选值 {buy-market：市价买, sell-market：市价卖, buy-limit：限价买, sell-limit：限价卖}
-        :param price: 
-        :return: 
+        :param price:
+        :return:
         """
         try:
-            accounts = get_accounts()
+            accounts = self.get_accounts()
             acct_id = accounts['data'][0]['id']
         except BaseException as e:
             print('get acct_id error.%s' % e)
-            acct_id = ACCOUNT_ID
+            acct_id = account_id
 
         params = {"account-id": acct_id,
                   "amount": amount,
@@ -376,73 +378,73 @@ class HuobiSVC:
             params["price"] = price
 
         url = '/v1/order/orders/place'
-        return api_key_post(params, url)
+        return self.api_key_post(params, url)
 
     # 现货账户划入至借贷账户
 
-    def exchange_to_margin(symbol, currency, amount):
+    def exchange_to_margin(self, symbol, currency, amount):
         """
-        :param amount: 
-        :param currency: 
-        :param symbol: 
-        :return: 
+        :param amount:
+        :param currency:
+        :param symbol:
+        :return:
         """
         params = {"symbol": symbol,
                   "currency": currency,
                   "amount": amount}
 
         url = "/v1/dw/transfer-in/margin"
-        return api_key_post(params, url)
+        return self.api_key_post(params, url)
 
     # 借贷账户划出至现货账户
 
-    def margin_to_exchange(symbol, currency, amount):
+    def margin_to_exchange(self, symbol, currency, amount):
         """
-        :param amount: 
-        :param currency: 
-        :param symbol: 
-        :return: 
+        :param amount:
+        :param currency:
+        :param symbol:
+        :return:
         """
         params = {"symbol": symbol,
                   "currency": currency,
                   "amount": amount}
 
         url = "/v1/dw/transfer-out/margin"
-        return api_key_post(params, url)
+        return self.api_key_post(params, url)
 
     # 申请借贷
-    def get_margin(symbol, currency, amount):
+    def get_margin(self, symbol, currency, amount):
         """
-        :param amount: 
-        :param currency: 
-        :param symbol: 
-        :return: 
+        :param amount:
+        :param currency:
+        :param symbol:
+        :return:
         """
         params = {"symbol": symbol,
                   "currency": currency,
                   "amount": amount}
         url = "/v1/margin/orders"
-        return api_key_post(params, url)
+        return self.api_key_post(params, url)
 
     # 归还借贷
-    def repay_margin(order_id, amount):
+    def repay_margin(self, order_id, amount):
         """
-        :param order_id: 
-        :param amount: 
-        :return: 
+        :param order_id:
+        :param amount:
+        :return:
         """
         params = {"order-id": order_id,
                   "amount": amount}
         url = "/v1/margin/orders/{0}/repay".format(order_id)
-        return api_key_post(params, url)
+        return self.api_key_post(params, url)
 
     # 借贷订单
-    def loan_orders(symbol, currency, start_date="", end_date="", start="", direct="", size=""):
+    def loan_orders(self, symbol, currency, start_date="", end_date="", start="", direct="", size=""):
         """
-        :param symbol: 
-        :param currency: 
+        :param symbol:
+        :param currency:
         :param direct: prev 向前，next 向后
-        :return: 
+        :return:
         """
         params = {"symbol": symbol,
                   "currency": currency}
@@ -457,22 +459,22 @@ class HuobiSVC:
         if size:
             params["size"] = size
         url = "/v1/margin/loan-orders"
-        return api_key_get(params, url)
+        return self.api_key_get(params, url)
 
     # 借贷账户详情,支持查询单个币种
-    def margin_balance(symbol):
+    def margin_balance(self, symbol):
         """
-        :param symbol: 
-        :return: 
+        :param symbol:
+        :return:
         """
         params = {}
         url = "/v1/margin/accounts/balance"
         if symbol:
             params['symbol'] = symbol
 
-        return api_key_get(params, url)
+        return self.api_key_get(params, url)
 
-    def http_get_request(url, params, add_to_headers=None):
+    def http_get_request(self, url, params, add_to_headers=None):
         headers = {
             "Content-type": "application/x-www-form-urlencoded",
             'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36',
@@ -491,7 +493,7 @@ class HuobiSVC:
             print("httpGet failed, detail is:%s,%s" % (response.text, e))
             return
 
-    def http_post_request(url, params, add_to_headers=None):
+    def http_post_request(self, url, params, add_to_headers=None):
         headers = {
             "Accept": "application/json",
             'Content-Type': 'application/json'
@@ -513,7 +515,7 @@ class HuobiSVC:
     def api_key_get(self, params, request_path):
         method = 'GET'
         timestamp = datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S')
-        params.update({'AccessKeyId': ACCESS_KEY,
+        params.update({'AccessKeyId': self.access_key,
                        'SignatureMethod': 'HmacSHA256',
                        'SignatureVersion': '2',
                        'Timestamp': timestamp})
@@ -521,15 +523,15 @@ class HuobiSVC:
         host_url = TRADE_URL
         host_name = urllib.parse.urlparse(host_url).hostname
         host_name = host_name.lower()
-        params['Signature'] = createSign(params, method, host_name, request_path, SECRET_KEY)
+        params['Signature'] = self.createSign(params, method, host_name, request_path, self.secret_key)
 
         url = host_url + request_path
-        return http_get_request(url, params)
+        return self.http_get_request(url, params)
 
-    def api_key_post(params, request_path):
+    def api_key_post(self, params, request_path):
         method = 'POST'
         timestamp = datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S')
-        params_to_sign = {'AccessKeyId': ACCESS_KEY,
+        params_to_sign = {'AccessKeyId': self.access_key,
                           'SignatureMethod': 'HmacSHA256',
                           'SignatureVersion': '2',
                           'Timestamp': timestamp}
@@ -537,11 +539,11 @@ class HuobiSVC:
         host_url = TRADE_URL
         host_name = urllib.parse.urlparse(host_url).hostname
         host_name = host_name.lower()
-        params_to_sign['Signature'] = createSign(params_to_sign, method, host_name, request_path, SECRET_KEY)
+        params_to_sign['Signature'] = self.createSign(params_to_sign, method, host_name, request_path, self.secret_key)
         url = host_url + request_path + '?' + urllib.parse.urlencode(params_to_sign)
-        return http_post_request(url, params)
+        return self.http_post_request(url, params)
 
-    def createSign(pParams, method, host_url, request_path, secret_key):
+    def createSign(self, pParams, method, host_url, request_path, secret_key):
         sorted_params = sorted(pParams.items(), key=lambda d: d[0], reverse=False)
         encode_params = urllib.parse.urlencode(sorted_params)
         payload = [method, host_url, request_path, encode_params]
