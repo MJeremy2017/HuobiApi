@@ -7,7 +7,8 @@ import urllib
 import urllib.parse
 import urllib.request
 import requests
-from config import *
+import pandas as pd
+from model.config import *
 
 
 class HuobiSVC:
@@ -29,6 +30,15 @@ class HuobiSVC:
 
         url = MARKET_URL + '/market/history/kline'
         return self.http_get_request(url, params)
+
+    # get market prices
+    def get_kline_df(self, symbol, period, size):
+        res = self.get_kline(symbol, period, size)
+        if res['status'] == 'ok':
+            kline_df = pd.DataFrame(res['data'])
+            return kline_df
+        else:
+            raise Exception('Query failed with status -> {}'.format(res['status']))
 
     # 获取marketdepth
     def get_depth(self, symbol, type):
@@ -128,7 +138,7 @@ class HuobiSVC:
         params = {}
         return self.api_key_get(params, path)
 
-    # 获取当前账户资产
+    # get account balance
     def get_balance(self, acct_id=None):
         """
         :param acct_id
@@ -143,10 +153,21 @@ class HuobiSVC:
         params = {"account-id": acct_id}
         return self.api_key_get(params, url)
 
-    # Making Orders
+    # get balance for a coin
+    def get_balance_coin(self, acct_id, symbol):
+        res = self.get_balance(acct_id=acct_id)
+        if res['status'] == 'ok':
+            res_dict = {}
+            balance_df = pd.DataFrame(res['data']['list'])
+            res_df = balance_df[balance_df['currency'] == symbol]
+            res_dict['trade_balance'] = float(res_df[res_df['type'] == 'trade']['balance'].values[0])
+            res_dict['frozen_balance'] = float(res_df[res_df['type'] == 'frozen']['balance'].values[0])
+            return res_dict
+        else:
+            raise Exception('Query failed with status -> {}'.format(res['status']))
 
-    # 创建并执行订单
-    def send_order(self, acct_id, amount, source, symbol, _type, price=0):
+    # Making Orders
+    def send_order(self, acct_id, amount, source, symbol, _type, price=0, stop_price=0, operator=None):
         """
         :param acct_id: account id
         :param amount:
@@ -154,15 +175,10 @@ class HuobiSVC:
         :param symbol:
         :param _type: 可选值 {buy-market：市价买, sell-market：市价卖, buy-limit：限价买, sell-limit：限价卖}
         :param price:
+        :param stop_price:
+        :param operator: gte – greater than and equal (>=), lte – less than and equal (<=)
         :return:
         """
-
-        try:
-            accounts = self.get_accounts()
-            acct_id = accounts['data'][0]['id']
-        except BaseException as e:
-            print('get acct_id error.%s' % e)
-            acct_id = acct_id
 
         params = {"account-id": acct_id,
                   "amount": amount,
@@ -171,6 +187,10 @@ class HuobiSVC:
                   "source": source}
         if price:
             params["price"] = price
+        if stop_price:
+            params["stop-price"] = stop_price
+        if operator:
+            params["operator"] = operator
 
         url = '/v1/order/orders/place'
         return self.api_key_post(params, url)
@@ -502,6 +522,9 @@ class HuobiSVC:
             headers.update(add_to_headers)
         postdata = json.dumps(params)
         response = requests.post(url, postdata, headers=headers, timeout=10)
+
+        print("final url", url)
+        print("final postdata", postdata)
         try:
 
             if response.status_code == 200:
