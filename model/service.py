@@ -18,7 +18,7 @@ class HuobiSVC:
     # 获取KLine
     def get_kline(self, symbol, period, size=150):
         """
-        :param symbol
+        :param symbol: btcusdt, ethbtc, ...
         :param period: 可选值：{1min, 5min, 15min, 30min, 60min, 1day, 1mon, 1week, 1year }
         :param size: 可选值： [1,2000]
         :return:
