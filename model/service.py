@@ -153,8 +153,8 @@ class HuobiSVC:
         params = {"account-id": acct_id}
         return self.api_key_get(params, url)
 
-    # get balance for a coin
-    def get_balance_coin(self, acct_id, symbol):
+    # get balance for a currency
+    def get_balance_currency(self, acct_id, symbol):
         res = self.get_balance(acct_id=acct_id)
         if res['status'] == 'ok':
             res_dict = {}
