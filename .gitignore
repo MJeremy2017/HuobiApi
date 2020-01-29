@@ -5,3 +5,10 @@ notebooks
 env
 venv
 */**/__pycache__
+.ipynb_checkpoints
+*/.ipynb_checkpoints
+*/spark-warehouse
+**/__pycache__
+dist
+autoetl.egg-info
+build
