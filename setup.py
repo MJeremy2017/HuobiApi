@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="huobiApi",
-    version="0.0.1",
+    version="0.0.2",
     author="Jeremy.Zhang",
     author_email="zhangyue93006@gmail.com",
     description="helper functions of huobi api call",

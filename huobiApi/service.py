@@ -8,7 +8,7 @@ import urllib.parse
 import urllib.request
 import requests
 import pandas as pd
-from huobiApi.model.config import TRADE_URL, MARKET_URL
+from huobiApi.config import TRADE_URL, MARKET_URL
 
 
 class HuobiSVC:
