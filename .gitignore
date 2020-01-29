@@ -10,5 +10,5 @@ venv
 */spark-warehouse
 **/__pycache__
 dist
-autoetl.egg-info
+huobiApi.egg-info
 build
