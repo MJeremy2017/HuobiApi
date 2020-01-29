@@ -8,7 +8,6 @@ import urllib.parse
 import urllib.request
 import requests
 import pandas as pd
-from model.config import *
 
 
 class HuobiSVC:

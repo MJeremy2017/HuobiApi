@@ -4,3 +4,4 @@ __pycache__
 notebooks
 env
 venv
+*/**/__pycache__
