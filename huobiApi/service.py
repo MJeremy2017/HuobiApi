@@ -16,7 +16,7 @@ class HuobiSVC:
         self.access_key = access_key
         self.secret_key = secret_key
 
-    # 获取KLine
+    # get KLine
     def get_kline(self, symbol, period, size=150):
         """
         :param symbol: btcusdt, ethbtc, ...
@@ -40,7 +40,7 @@ class HuobiSVC:
         else:
             raise Exception('Query failed with status -> {}'.format(res['status']))
 
-    # 获取marketdepth
+    # get market depth
     def get_depth(self, symbol, type):
         """
         :param symbol
@@ -53,7 +53,7 @@ class HuobiSVC:
         url = MARKET_URL + '/market/depth'
         return self.http_get_request(url, params)
 
-    # 获取tradedetail
+    # get trade detail
     def get_trade(self, symbol):
         """
         :param symbol
@@ -73,7 +73,7 @@ class HuobiSVC:
         url = MARKET_URL + '/market/tickers'
         return self.http_get_request(url, params)
 
-    # 获取merge ticker
+    # get merge ticker
     def get_ticker(self, symbol):
         """
         :param symbol:
@@ -84,7 +84,7 @@ class HuobiSVC:
         url = MARKET_URL + '/market/detail/merged'
         return self.http_get_request(url, params)
 
-    # 获取 Market Detail 24小时成交量数据
+    # get Market Detail 24 hour volume
     def get_detail(self, symbol):
         """
         :param symbol
@@ -95,7 +95,7 @@ class HuobiSVC:
         url = MARKET_URL + '/market/detail'
         return self.http_get_request(url, params)
 
-    # 获取  支持的交易对
+    # get available symbols
     def get_symbols(self, long_polling=None):
         """
 
@@ -195,7 +195,7 @@ class HuobiSVC:
         url = '/v1/order/orders/place'
         return self.api_key_post(params, url)
 
-    # 撤销订单
+    # cancel an order
     def cancel_order(self, order_id):
         """
 
@@ -206,7 +206,7 @@ class HuobiSVC:
         url = "/v1/order/orders/{0}/submitcancel".format(order_id)
         return self.api_key_post(params, url)
 
-    # 查询某个订单
+    # get an order info
     def order_info(self, order_id):
         """
 
@@ -217,7 +217,7 @@ class HuobiSVC:
         url = "/v1/order/orders/{0}".format(order_id)
         return self.api_key_get(params, url)
 
-    # 查询某个订单的成交明细
+    # get order results
     def order_matchresults(self, order_id):
         """
 
@@ -228,7 +228,7 @@ class HuobiSVC:
         url = "/v1/order/orders/{0}/matchresults".format(order_id)
         return self.api_key_get(params, url)
 
-    # 查询当前委托、历史委托
+    # get order list
     def orders_list(self, symbol, states, types=None, start_date=None, end_date=None, _from=None, direct=None, size=None):
         """
 
@@ -260,7 +260,7 @@ class HuobiSVC:
         url = '/v1/order/orders'
         return self.api_key_get(params, url)
 
-    # 查询当前成交、历史成交
+    # get matched orders
     def orders_matchresults(self, symbol, types=None, start_date=None, end_date=None, _from=None, direct=None, size=None):
         """
 
@@ -290,7 +290,7 @@ class HuobiSVC:
         url = '/v1/order/matchresults'
         return self.api_key_get(params, url)
 
-    # 查询所有当前帐号下未成交订单
+    # get open orders
     def open_orders(self, account_id, symbol, side='', size=10):
         """
         :param symbol:
@@ -309,7 +309,7 @@ class HuobiSVC:
 
         return self.api_key_get(params, url)
 
-    # 批量取消符合条件的订单
+    # batch cancel orders
     def cancel_open_orders(self, account_id, symbol, side='', size=10):
         """
         :param symbol:
@@ -328,7 +328,7 @@ class HuobiSVC:
 
         return self.api_key_post(params, url)
 
-    # 申请提现虚拟币
+    # withdraw currencies
     def withdraw(self, address, amount, currency, fee=0, addr_tag=""):
         """
 
@@ -351,7 +351,7 @@ class HuobiSVC:
 
         return self.api_key_post(params, url)
 
-    # 申请取消提现虚拟币
+    # cancel withdraw order
     def cancel_withdraw(self, address_id):
         """
 
@@ -370,8 +370,7 @@ class HuobiSVC:
     MARGIN API
     '''
 
-    # 创建并执行借贷订单
-
+    # create and send margin order
     def send_margin_order(self, account_id, amount, source, symbol, _type, price=0):
         """
         :param account_id:
@@ -400,8 +399,7 @@ class HuobiSVC:
         url = '/v1/order/orders/place'
         return self.api_key_post(params, url)
 
-    # 现货账户划入至借贷账户
-
+    # exchange account to margin account
     def exchange_to_margin(self, symbol, currency, amount):
         """
         :param amount:
@@ -416,8 +414,7 @@ class HuobiSVC:
         url = "/v1/dw/transfer-in/margin"
         return self.api_key_post(params, url)
 
-    # 借贷账户划出至现货账户
-
+    # margin account to exchange account
     def margin_to_exchange(self, symbol, currency, amount):
         """
         :param amount:
@@ -432,7 +429,7 @@ class HuobiSVC:
         url = "/v1/dw/transfer-out/margin"
         return self.api_key_post(params, url)
 
-    # 申请借贷
+    # get margin
     def get_margin(self, symbol, currency, amount):
         """
         :param amount:
@@ -446,7 +443,7 @@ class HuobiSVC:
         url = "/v1/margin/orders"
         return self.api_key_post(params, url)
 
-    # 归还借贷
+    # repay
     def repay_margin(self, order_id, amount):
         """
         :param order_id:
@@ -458,7 +455,7 @@ class HuobiSVC:
         url = "/v1/margin/orders/{0}/repay".format(order_id)
         return self.api_key_post(params, url)
 
-    # 借贷订单
+    # loan order
     def loan_orders(self, symbol, currency, start_date="", end_date="", start="", direct="", size=""):
         """
         :param symbol:
@@ -481,7 +478,7 @@ class HuobiSVC:
         url = "/v1/margin/loan-orders"
         return self.api_key_get(params, url)
 
-    # 借贷账户详情,支持查询单个币种
+    # get margin balance
     def margin_balance(self, symbol):
         """
         :param symbol:
