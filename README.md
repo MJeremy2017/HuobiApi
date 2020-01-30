@@ -6,12 +6,14 @@ __Note__: This is not an official package. For more info, please resort to offic
 ## Installation
 ```
 pip install huobiApi
-
 ```
 
 ## Get Accounts ID
 
 ```
+import os
+from huobiApi.service import HuobiSVC
+
 ACCESS_KEY = os.getenv('ACCESS_KEY')
 SECRET_KEY = os.getenv('SECRET_KEY')
 
