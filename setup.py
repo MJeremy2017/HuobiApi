@@ -5,10 +5,10 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="huobiApi",
-    version="0.0.2",
+    version="0.0.4",
     author="Jeremy.Zhang",
     author_email="zhangyue93006@gmail.com",
-    description="helper functions of huobi api call",
+    description="helper functions of huobi rest api",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/MJeremy2017/HuobiApi",
