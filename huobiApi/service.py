@@ -520,8 +520,6 @@ class HuobiSVC:
         postdata = json.dumps(params)
         response = requests.post(url, postdata, headers=headers, timeout=10)
 
-        print("final url", url)
-        print("final postdata", postdata)
         try:
 
             if response.status_code == 200:
