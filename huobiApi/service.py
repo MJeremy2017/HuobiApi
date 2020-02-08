@@ -173,7 +173,7 @@ class HuobiSVC:
         :param amount:
         :param source: 如果使用借贷资产交易，请在下单接口,请求参数source中填写'margin-api'
         :param symbol:
-        :param _type: 可选值 {buy-market：市价买, sell-market：市价卖, buy-limit：限价买, sell-limit：限价卖}
+        :param _type: options {buy-market：市价买, sell-market：市价卖, buy-limit：限价买, sell-limit：限价卖}
         :param price:
         :param stop_price:
         :param operator: gte – greater than and equal (>=), lte – less than and equal (<=)
@@ -233,12 +233,12 @@ class HuobiSVC:
         """
 
         :param symbol:
-        :param states: 可选值 {pre-submitted 准备提交, submitted 已提交, partial-filled 部分成交, partial-canceled 部分成交撤销, filled 完全成交, canceled 已撤销}
-        :param types: 可选值 {buy-market：市价买, sell-market：市价卖, buy-limit：限价买, sell-limit：限价卖}
+        :param states: options {pre-submitted 准备提交, submitted 已提交, partial-filled 部分成交, partial-canceled 部分成交撤销, filled 完全成交, canceled 已撤销}
+        :param types: options {buy-market：市价买, sell-market：市价卖, buy-limit：限价买, sell-limit：限价卖}
         :param start_date:
         :param end_date:
         :param _from:
-        :param direct: 可选值{prev 向前，next 向后}
+        :param direct: options {prev 向前，next 向后}
         :param size:
         :return:
         """
@@ -265,11 +265,11 @@ class HuobiSVC:
         """
 
         :param symbol:
-        :param types: 可选值 {buy-market：市价买, sell-market：市价卖, buy-limit：限价买, sell-limit：限价卖}
+        :param types: options {buy-market：市价买, sell-market：市价卖, buy-limit：限价买, sell-limit：限价卖}
         :param start_date:
         :param end_date:
         :param _from:
-        :param direct: 可选值{prev 向前，next 向后}
+        :param direct: options {prev 向前，next 向后}
         :param size:
         :return:
         """
@@ -377,7 +377,7 @@ class HuobiSVC:
         :param amount:
         :param source: 'margin-api'
         :param symbol:
-        :param _type: 可选值 {buy-market：市价买, sell-market：市价卖, buy-limit：限价买, sell-limit：限价卖}
+        :param _type: options {buy-market：市价买, sell-market：市价卖, buy-limit：限价买, sell-limit：限价卖}
         :param price:
         :return:
         """
