@@ -65,7 +65,6 @@ data = svc.send_order(
                 symbol='btcusdt',
                 _type='sell-stop-limit',
                 stop_price='8000',
-                operator='lte'
-                )
+                operator='lte')
 
 ```
