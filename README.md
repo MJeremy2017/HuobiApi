@@ -17,7 +17,7 @@ from huobiApi.service import HuobiSVC
 ACCESS_KEY = os.getenv('ACCESS_KEY')
 SECRET_KEY = os.getenv('SECRET_KEY')
 
-svc = HuobiSVC(ACCESS_KEY, SECRET_KEY)
+svc = HuobiSVC(ACCESS_KEY, SECRET_KEY, url_type='normal')  # or aws
 
 svc.get_accounts()
 ```
