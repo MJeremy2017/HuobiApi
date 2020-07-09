@@ -8,13 +8,15 @@ import urllib.parse
 import urllib.request
 import requests
 import pandas as pd
-from huobiApi.config import TRADE_URL, MARKET_URL
+from huobiApi.config import TRADE_URL, MARKET_URL, AWS_MARKET_URL, AWS_TRADE_URL
 
 
 class HuobiSVC:
-    def __init__(self, access_key, secret_key):
+    def __init__(self, access_key, secret_key, url_type='normal'):
         self.access_key = access_key
         self.secret_key = secret_key
+        self.market_url = AWS_MARKET_URL if url_type == 'aws' else MARKET_URL
+        self.trade_url = AWS_TRADE_URL if url_type == 'aws' else TRADE_URL
 
     # get KLine
     def get_kline(self, symbol, period, size=150):
@@ -28,7 +30,7 @@ class HuobiSVC:
                   'period': period,
                   'size': size}
 
-        url = MARKET_URL + '/market/history/kline'
+        url = self.market_url + '/market/history/kline'
         return self.http_get_request(url, params)
 
     # get market prices
@@ -38,7 +40,7 @@ class HuobiSVC:
             kline_df = pd.DataFrame(res['data'])
             return kline_df
         else:
-            raise Exception('Query failed with status -> {}'.format(res['status']))
+            raise Exception('Query failed with status: {}'.format(res))
 
     # get market depth
     def get_depth(self, symbol, type):
@@ -50,7 +52,7 @@ class HuobiSVC:
         params = {'symbol': symbol,
                   'type': type}
 
-        url = MARKET_URL + '/market/depth'
+        url = self.market_url + '/market/depth'
         return self.http_get_request(url, params)
 
     # get trade detail
@@ -61,7 +63,7 @@ class HuobiSVC:
         """
         params = {'symbol': symbol}
 
-        url = MARKET_URL + '/market/trade'
+        url = self.market_url + '/market/trade'
         return self.http_get_request(url, params)
 
     # Tickers detail
@@ -70,7 +72,7 @@ class HuobiSVC:
         :return:
         """
         params = {}
-        url = MARKET_URL + '/market/tickers'
+        url = self.market_url + '/market/tickers'
         return self.http_get_request(url, params)
 
     # get merge ticker
@@ -81,7 +83,7 @@ class HuobiSVC:
         """
         params = {'symbol': symbol}
 
-        url = MARKET_URL + '/market/detail/merged'
+        url = self.market_url + '/market/detail/merged'
         return self.http_get_request(url, params)
 
     # get Market Detail 24 hour volume
@@ -92,7 +94,7 @@ class HuobiSVC:
         """
         params = {'symbol': symbol}
 
-        url = MARKET_URL + '/market/detail'
+        url = self.market_url + '/market/detail'
         return self.http_get_request(url, params)
 
     # get available symbols
@@ -112,7 +114,7 @@ class HuobiSVC:
         :return:
         """
         params = {}
-        url = MARKET_URL + '/v1/common/currencys'
+        url = self.market_url + '/v1/common/currencys'
 
         return self.http_get_request(url, params)
 
@@ -122,7 +124,7 @@ class HuobiSVC:
         :return:
         """
         params = {}
-        url = MARKET_URL + '/v1/common/symbols'
+        url = self.market_url + '/v1/common/symbols'
 
         return self.http_get_request(url, params)
 
@@ -538,7 +540,7 @@ class HuobiSVC:
                        'SignatureVersion': '2',
                        'Timestamp': timestamp})
 
-        host_url = TRADE_URL
+        host_url = self.trade_url
         host_name = urllib.parse.urlparse(host_url).hostname
         host_name = host_name.lower()
         params['Signature'] = self.createSign(params, method, host_name, request_path, self.secret_key)
@@ -554,7 +556,7 @@ class HuobiSVC:
                           'SignatureVersion': '2',
                           'Timestamp': timestamp}
 
-        host_url = TRADE_URL
+        host_url = self.trade_url
         host_name = urllib.parse.urlparse(host_url).hostname
         host_name = host_name.lower()
         params_to_sign['Signature'] = self.createSign(params_to_sign, method, host_name, request_path, self.secret_key)
@@ -574,3 +576,8 @@ class HuobiSVC:
         signature = signature.decode()
         return signature
 
+
+if __name__ == "__main__":
+    svc = HuobiSVC('', '', url_type='aws')
+    df = svc.get_kline_df('btcusdt', '60min', size=200)
+    print(df)
