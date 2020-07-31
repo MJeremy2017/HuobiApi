@@ -373,11 +373,10 @@ class HuobiSVC:
     '''
 
     # create and send margin order
-    def send_margin_order(self, account_id, amount, source, symbol, _type, price=0):
+    def send_margin_order(self, account_id, amount, symbol, _type, price=0):
         """
         :param account_id:
         :param amount:
-        :param source: 'margin-api'
         :param symbol:
         :param _type: options {buy-market：市价买, sell-market：市价卖, buy-limit：限价买, sell-limit：限价卖}
         :param price:
@@ -493,6 +492,18 @@ class HuobiSVC:
 
         return self.api_key_get(params, url)
 
+    def margin_loan_info(self, symbol):
+        """
+
+        :param symbol:
+        :return:
+        """
+        params = {}
+        url = "/v1/margin/loan-info"
+        if symbol:
+            params['symbol'] = symbol
+        return self.api_key_get(params, url)
+
     def http_get_request(self, url, params, add_to_headers=None):
         headers = {
             "Content-type": "application/x-www-form-urlencoded",
@@ -578,6 +589,12 @@ class HuobiSVC:
 
 
 if __name__ == "__main__":
-    svc = HuobiSVC('', '', url_type='aws')
-    df = svc.get_kline_df('btcusdt', '60min', size=200)
+    ac_key = "ntmuw4rrsr-c867c71d-779631db-60b38"
+    sk_key = "8876ab18-7397bf19-24345c02-c42da"
+
+    svc = HuobiSVC(ac_key, sk_key, url_type='aws')
+    df = svc.get_kline_df('btcusdt', '60min', size=10)
     print(df)
+
+    a = svc.margin_loan_info("usdt")
+    print(a)
