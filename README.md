@@ -8,7 +8,7 @@ __Note__: This is not an official package. For more info, please resort to offic
 pip install huobiApi
 ```
 
-## Get Accounts ID
+## Get Account ID
 
 ```
 import os
