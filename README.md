@@ -1,7 +1,7 @@
 # HuobiApi-1.0
 Huobi REST API Package(source https://github.com/MJeremy2017/HuobiApi)
 
-__Note__: This is not an official package. For more info, please resort to official docs
+__Note__: This is not an official package. For more info, please resort to official docs.
 
 ## Installation
 ```
